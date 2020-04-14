@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Introduction to property-based testing</title>
+    <meta name="description" content="Introduction to property-based testing" />
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/matrix.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
+
+    <!-- Printing and PDF exports -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section id="welcome">
+          <header>
+            <h3>Introduction to property-based testing</h3>
+            </ul>
+          </header>
+          <p>
+            Sources:
+            <ul>
+              <li>
+                <a href="https://propertesting.com/">[1] Property-Based testing with PropEr, Erlang, and Elixir</a>
+              </li>
+              <li>
+                <a href="https://pragprog.com/book/tpp20/the-pragmatic-programmer-20th-anniversary-edition" class="href">[2] Pragmatic Programmer, 20th anniversary edition</a>
+              </li>
+          </p>
+        </section>
+        <section id="example-based-tests">
+          <h3>Example-based tests</h3>
+            <ul>
+              <li>
+                Define examples of given input and expected output
+              </li>
+              <li>
+                <u>Indirectly imply rules</u> dictating the behaviour of your code
+              </li>
+            </ul>
+              <pre>
+                <code class="language-python">
+def test_mysort():
+  l = [5, 3, 2, 1, 6]
+  l_sorted = my_sort(l)
+  assert l_sorted == [1, 2, 3, 5, 6]
+                </code>
+              </pre>
+        </section>
+        <section id="property-based-tests">
+          <h3>Property-based tests</h3>
+              Property-based testing (PBT) asks you to <u>come up with the rules first</u> and them tests them for you
+              <pre>
+                <code class="language-python">
+from hypothesis import given
+import hypothesis.strategies as some
+
+@given(l=some.lists(some.integers()))
+def test_my_sort(l):
+    l_sorted = my_sort(l)
+    assert len(l_sorted) == len(l)
+    assert set(l_sorted) == set(l)
+    for i in range(len(l) - 1):
+        assert l_sorted[i] <= l_sorted[i+1]        
+                </code>
+              </pre>
+        </section>
+        <section id="why">
+          <h3>Why property-based tests?</h3>
+          <ul>
+            <li>Exhaustively comb through your code</li>
+            <li>Write more declarative tests instead of hard-coded examples</li>
+            <li>Verify assumptions</li>
+            <li>Test behaviour you could have never imagined</li>
+          </ul>
+        </section>
+        <section id="examples">
+          <h3>
+            Examples
+          </h3>
+          <ul>
+            <li>
+              T. Arts found 25 important bugs from Project FIFO
+              <ul>
+                <li>460 lines of test code</li>
+                <li>Covered 60 000 lines of code</li>
+                <li>Timing errors, race conditions, type errors, errors in documentation,...</li>
+              </ul>
+              <li>
+                J. W. Norton found sequences of 17 and 31 specific calls that could corrupt databases in Google's levelDB
+              </li>
+            </li>
+          </ul>
+        </section>
+        <section id="why-not">
+          <h3>
+            Why not PBT?
+          </h3>
+          <ul>
+            <li>Property-based tests <u>do not replace example-based tests</u></li>
+            <li>Example-based tests are good, for example, for
+              <ul>
+                <li>
+                  <u>Regression</u> tests
+                </li>
+                <li>
+                  <u>Anchors</u> ensuring properties don't "drift"
+                </li>
+                <li>
+                  <u>Human-readable examples</u> of input and output
+                </li>
+              </ul>
+            </li>
+            <li>Coming up with good properties can be hard and error-prone</li>
+          </ul>
+        </section>
+        <section id="frameworks">
+          <h3>Frameworks</h3>
+          <ul>
+            <li>
+              <a href="https://hackage.haskell.org/package/QuickCheck" class="href">QuickCheck</a> (Haskell)
+            </li>
+            <li>
+              <a href="https://github.com/dubzzz/fast-check" class="href">fast-check</a> (TypeScript)
+            </li>
+            <li>
+              <a href="https://hypothesis.readthedocs.io/en/latest/" class="href">Hypothesis</a> (Python)
+              <ul>
+                <li>
+                  Includes <a href="https://hypothesis.readthedocs.io/en/latest/numpy.html" class="href">NumPy and Pandas</a> tools!
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="https://proper-testing.github.io/" class="href">PropEr</a> (Erlang)
+            </li>
+            <li>
+              <a href="https://github.com/alfert/propcheck" class="href">PropCheck</a> (Elixir)
+            </li>
+            <li>
+              <a href="https://fscheck.github.io/FsCheck/" class="href">FsCheck</a> (.NET)
+            </li>
+          </ul>
+        </section>
+        <section id="concepts">
+          <h3>Basic concepts</h3>
+          <ul>
+            <li>Properties</li>
+            <li>Generators</li>
+            <li>Shrinking (not discussed)</li>
+          </ul>
+        </section>
+
+        <section id="coming-up">
+          <h3>Coming up with properties</h3>
+          <ul>
+            <li>
+              Modeling
+            </li>
+            <li>
+              Invariants
+            </li>
+            <li>
+              Symmetries
+            </li>
+            <li>
+              Generalize example-based tests
+              <ul>
+                <li>
+                  Replace hard-coded input values with generators
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section id="property-modeling">
+          <h3>
+            Modeling
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "finds biggest element" do
+  forall x <- non_empty(list(integer())) do
+    MyModule.biggest(x) == model_biggest(x)
+  end
+end
+
+def model_biggest(x) do
+  List.last(Enum.sort(list))
+end
+            </code>
+          </pre>
+
+        </section>
+
+        <section id="property-symmetric">
+          <h3>
+            Symmetry
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "symmetric encoding/decoding" do
+  forall data <- list({atom(), any()}) do
+    encoded = encode(data)
+    is_binary(encoded) and data == decode(encoded)
+  end
+end
+            </code>
+          </pre>
+
+        </section>
+
+        <section id="property-invariant">
+          <h3>
+            Invariance
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "a sorted list keeps its size" do
+  forall l <- list(number()) do
+    length(l) == length(MyModule.sort(l))
+  end
+end
+            </code>
+          </pre>
+        </section>
+        <section id="generators">
+          <h3>Generators</h3>
+          <ul>
+            <li>
+              Generators generate test data
+            <ul>
+              <li>
+                Integers, lists, objects, one-of, symbolic calls, HTTP requests...
+              </li>
+            </ul>
+            </li>
+            <li>
+              Generators are <b>composable</b>
+              <ul>
+                <li>Lists of integers, map with strings, symbolic calls with integer arguments</li>
+              </ul>
+            </li>
+            <li>
+              Generators can be <b>resized</b>, <b>transformed</b>, and <b>restricted</b>
+                <ul>
+                  <li>Lists with more than one million values</li>
+                  <li>List of HTTP requests where POST requests always precede GET requests</li>
+                  <li>Only non-leap-day dates</li>
+                </ul>
+            </li>
+          </ul>
+        </section>
+        <section id="fancy-generators">
+          <h3>Fancy generators</h3>
+          <ul>
+            <li><a href="http://proper.softlab.ntua.gr/papers/icst2018.pdf" class="href">Targeted example generation</a>
+              <ul>
+                <li>
+                  <a href="https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation" class="href">hypothesis.target</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.TargetedPBT.html#content" class="href">PropCheck.TargetedPBT</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Genetic algorithms
+            </li>
+            <li>
+              State-based generators
+              <ul>
+                <li>
+                  <a href="https://hexdocs.pm/propcheck/PropCheck.StateM.html#content" class="href">PropChec.StateM</a>: <q>Given a callback module implementing the :proper_statem behaviour (i.e. defining an abstract state machine of the system under test), PropEr can generate random symbolic sequences of calls to that system</q>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+        <section id="statistics">
+          <h3>Generator statistics</h3>
+          <ul>
+            <li>
+              Very important to understand what is (not) being tested
+              <ul>
+            <li>
+              <a href="https://hexdocs.pm/propcheck/PropCheck.html#collect/2">collect</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#aggregate/2" class="href">aggregate</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#measure/3" class="href">measure</a> in PropCheck
+            </li>
+              </ul>
+              <li>Example output from <a href="https://hypothesis.readthedocs.io/en/latest/details.html#hypothesis.event">hypothesis.event</a>:
+                <pre>
+            <code>
+  - Events:
+    *  63.37%, input list length in range 0-5
+    *  27.72%, input list length in range 5-10
+    *   3.96%, input list length in range 10-15
+    *   2.97%, input list length in range 15-20
+    *   0.99%, input list length in range 35-40
+            </code>
+          </pre>
+              </li>
+          </ul>
+          
+        </section>
+        <section id="demo">
+          <h3>
+            Demo
+          </h3>
+          Repository:
+          <a href="https://github.com/ksaaskil/introduction-to-property-based-testing">
+            ksaaskil/introduction-to-property-based-testing
+          </a>
+        </section>
+
+        <section id="stateful-intro" data-markdown>
+          <textarea data-template>
+### Stateful properties
+
+- Most of the amazing stories of property-based testing involve large and complex *stateful* systems
+- Particularly useful when what the user sees is simple but the underlying system is complex
+			</textarea
+          >
+        </section>
+
+        <section id="stateful-2" data-markdown>
+          <textarea data-template>
+### Testing stateful properties
+
+  1. Define a **model** for how your system behaves
+  1. Let PBT framework generate series of **commands** representing operations on the system
+  1. Run the commands on **both the model and the system**
+  1. Check that the **system output agrees with the model's output**
+			</textarea
+          >
+        </section>
+
+        <section id="model" data-markdown>
+          <textarea data-template>
+### Model
+
+- Simple, straightforward, abstract version of what the actual system should be doing
+- Made of two parts:
+  1. A data structure representing the **state** of the system
+    - Dictionary, list, etc.
+  1. Function that transforms the model state based on commands applied to the system (*next_state*)
+
+<pre>
+  <code class="language-python">
+    def next_state(state: State, res: Result, operation: Operation) -> State:
+      # Update model state
+      new_state = ...
+      return new_state
+  </code>
+</pre>
+          </textarea>
+        </section>
+
+        <section id="stateful-example" data-markdown>
+          <textarea data-template>
+### Commands
+
+1. A list of potential symbolic calls with generators for arguments
+1. A series of **preconditions** defining whether a given call would make sense according to the current *model* state
+
+<pre>
+  <code class="language-elixir">
+# Possible commands based on current state
+def command(_state) do
+  oneof([
+    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
+    {:call, Bookstore.DB, :add_copy, [isbn()]},
+    {:call, Bookstore.DB, :query_existing_book, [isbn()]}
+  ])
+end
+
+# Whether a command is valid under the current state
+def precondition(state, {:call, _mod, _fun, _args}) do
+  # Some logic how to only allow "query_existing_book" if the book is in model state...
+  true
+end
+  </code>
+</pre>
+
+          </textarea>
+        </section>
+
+        <section id="postconditions" data-markdown>
+          <textarea data-template>
+### Postconditions
+
+- Used for checking that things are right when **validating actual system**
+- Not included in the model
+- Either check for
+  - invariants that should always hold true
+  - agreement between expected output based on model and the actual system output
+
+<pre>
+  <code class="language-elixir">
+# Given the state before the call, did the result from the *actual system* make sense
+def postcondition(state, {:call, _mod, _fun, _args}, _res) do
+  true
+end
+  </code>
+</pre>
+
+          </textarea>
+        </section>
+
+        <section id="stateful-summary" data-markdown>
+          <textarea data-template>
+#### Summary of stateful PBT
+Requirements:
+
+- **Model** comprised of some data (state) that gets modified by *next_state* function
+- **Commands** representing operations that can be applied, constrained with *preconditions*
+- **Postconditions** ensuring that the results from the actual system match what we expect *based on the model*
+          </textarea>
+        </section>
+
+        <section id="stateful-example" data-markdown>
+          <textarea data-template>
+#### Putting it all together
+<pre>
+  <code class="language-elixir">
+# Initial model value
+def initial_state(), do: %{}
+
+# Possible commands based on current state
+def command(_state) do
+  oneof([
+    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
+    {:call, Bookstore.DB, :add_copy, [isbn()]}
+  ])
+end
+
+# Whether a command is valid under the current state
+def precondition(state, {:call, _mod, _fun, _args}) do
+  true
+end
+
+# Given the state before the call, did the result from the *actual system* make sense
+def postcondition(state, {:call, _mod, _fun, _args}, _res) do
+  true
+end
+
+# Update the model state for the test to proceed
+def next_state(state, _res, {:call, _mod, _fun, _args}) do
+  new_state = state
+  new_state
+end
+
+  </code>
+</pre>
+          </textarea>
+        </section>
+
+        <section id="execution">
+<h3>Stateful test execution</h3>
+<ul>
+  <li>
+    PropEr divides execution of stateful tests into <b>abstract and real phases</b>
+  </li>
+  <li>
+    Abstract phase
+    <ul>
+      <li>
+        <b>is only based on the model</b>: it lacks postconditions or actual calls to the system
+      </li>
+      <li>
+        defines the sequences of commands run in the real execution phase
+      </li>
+    </ul>
+  </li>
+  
+  <li>
+    Illustration from [1]:
+  </li>
+</ul>
+<img src="https://ksaaskil.github.io/introduction-to-property-based-testing/images/stateful-abstract.png"  height="200" width="500">
+          </textarea>
+          
+        </section>
+
+        <section id="execution-real">
+          <h3>Real execution phase</h3>
+<ul>
+  <li>
+    Apply the commands from the abstract execution phase to the real system
+  </li>
+  <li>
+    Also check postconditions as well as preconditions
+  </li>
+  <li>
+    <b>Important: model defines tried sequences of operations, the actual system never drives the test</b>
+  </li>
+</ul>
+<img src="https://ksaaskil.github.io/introduction-to-property-based-testing/images/execution-real.png"  height="200" width="500">
+        </section>
+
+        <section id="pattern-matching" data-markdown>
+          <textarea data-template>
+#### Pattern matching FTW
+Pattern matching makes preconditions, postconditions, and state transitions more succint and readable
+<pre>
+  <code class="language-elixir">
+def precondition(state, {:call, _, :borrow_copy_avail, [isbn]}) do
+  0 < elem(Map.get(s, isbn), 4)
+end
+
+def precondition(state, {:call, _, :borrow_copy_unavail, [isbn]}) do
+  0 == elem(Map.get(s, isbn), 4)
+end
+
+def precondition(state, {:call, _, :return_copy_full, [isbn]}) do
+  {_, _, _, owned, avail} = Map.get(s, isbn)
+  owned == avail
+end
+
+def precondition(state, {:call, _, :return_copy_existing, [isbn]}) do
+  {_, _, _, owned, avail} = Map.get(s, isbn)
+  owned != avail
+end
+
+# ...and so on
+  </code>
+</pre>
+          </textarea>
+        </section>
+
+        <section id="demo-stateful">
+          <h3>
+            Demo
+          </h3>
+          <a href="https://github.com/ksaaskil/introduction-to-property-based-testing/tree/master/bookstore">
+            ksaaskil/introduction-to-property-based-testing:bookstore/
+          </a>
+        </section>
+
+        <section id="resources">
+          <h3>
+            Resources
+          </h3>
+          <ul>
+            <li><a href="https://fsharpforfunandprofit.com/posts/property-based-testing-2/" class="href">Choosing properties for property-based testing</a></li>
+          </ul>
+        </section>
+
+        <section id="acknowledgements">
+          <h3>Acknowledgements</h3>
+          <ul>
+            <li>
+              Slides created with
+              <a href="https://revealjs.com/#/">Reveal.js</a>
+            </li>
+            <li>
+              Color theme cloned from
+              <a href="http://www.eclipsecolorthemes.org/?view=theme&id=467"
+                >Matrix</a
+              >
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        hash: true,
+        transition: "none",
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/notes/notes.js", async: true },
+          { src: "plugin/highlight/highlight.js", async: true },
+
+          // Zoom in and out with Alt+click
+          { src: "plugin/zoom-js/zoom.js", async: true },
+        ],
+      });
+    </script>
+  </body>
+</html>
