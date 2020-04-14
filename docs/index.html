@@ -24,7 +24,7 @@
       <div class="slides">
         <section id="welcome">
           <header>
-            <h3>Introduction to property-based testing</h3>
+            <h3>Introduction to targeted property-based testing</h3>
             </ul>
           </header>
           <p>
@@ -33,544 +33,329 @@
               <li>
                 <a href="https://propertesting.com/">[1] Property-Based testing with PropEr, Erlang, and Elixir</a>
               </li>
-              <li>
-                <a href="https://pragprog.com/book/tpp20/the-pragmatic-programmer-20th-anniversary-edition" class="href">[2] Pragmatic Programmer, 20th anniversary edition</a>
-              </li>
           </p>
         </section>
-        <section id="example-based-tests">
-          <h3>Example-based tests</h3>
-            <ul>
-              <li>
-                Define examples of given input and expected output
-              </li>
-              <li>
-                <u>Indirectly imply rules</u> dictating the behaviour of your code
-              </li>
-            </ul>
-              <pre>
-                <code class="language-python">
-def test_mysort():
-  l = [5, 3, 2, 1, 6]
-  l_sorted = my_sort(l)
-  assert l_sorted == [1, 2, 3, 5, 6]
-                </code>
-              </pre>
-        </section>
-        <section id="property-based-tests">
-          <h3>Property-based tests</h3>
-              Property-based testing (PBT) asks you to <u>come up with the rules first</u> and them tests them for you
-              <pre>
-                <code class="language-python">
-from hypothesis import given
-import hypothesis.strategies as some
-
-@given(l=some.lists(some.integers()))
-def test_my_sort(l):
-    l_sorted = my_sort(l)
-    assert len(l_sorted) == len(l)
-    assert set(l_sorted) == set(l)
-    for i in range(len(l) - 1):
-        assert l_sorted[i] <= l_sorted[i+1]        
-                </code>
-              </pre>
-        </section>
+        
         <section id="why">
-          <h3>Why property-based tests?</h3>
+          <h3>Why targeted property-based tests?</h3>
           <ul>
-            <li>Exhaustively comb through your code</li>
-            <li>Write more declarative tests instead of hard-coded examples</li>
-            <li>Verify assumptions</li>
-            <li>Test behaviour you could have never imagined</li>
-          </ul>
-        </section>
-        <section id="examples">
-          <h3>
-            Examples
-          </h3>
-          <ul>
-            <li>
-              T. Arts found 25 important bugs from Project FIFO
-              <ul>
-                <li>460 lines of test code</li>
-                <li>Covered 60 000 lines of code</li>
-                <li>Timing errors, race conditions, type errors, errors in documentation,...</li>
-              </ul>
-              <li>
-                J. W. Norton found sequences of 17 and 31 specific calls that could corrupt databases in Google's levelDB
-              </li>
-            </li>
-          </ul>
-        </section>
-        <section id="why-not">
-          <h3>
-            Why not PBT?
-          </h3>
-          <ul>
-            <li>Property-based tests <u>do not replace example-based tests</u></li>
-            <li>Example-based tests are good, for example, for
-              <ul>
-                <li>
-                  <u>Regression</u> tests
-                </li>
-                <li>
-                  <u>Anchors</u> ensuring properties don't "drift"
-                </li>
-                <li>
-                  <u>Human-readable examples</u> of input and output
-                </li>
-              </ul>
-            </li>
-            <li>Coming up with good properties can be hard and error-prone</li>
-          </ul>
-        </section>
-        <section id="frameworks">
-          <h3>Frameworks</h3>
-          <ul>
-            <li>
-              <a href="https://hackage.haskell.org/package/QuickCheck" class="href">QuickCheck</a> (Haskell)
-            </li>
-            <li>
-              <a href="https://github.com/dubzzz/fast-check" class="href">fast-check</a> (TypeScript)
-            </li>
-            <li>
-              <a href="https://hypothesis.readthedocs.io/en/latest/" class="href">Hypothesis</a> (Python)
-              <ul>
-                <li>
-                  Includes <a href="https://hypothesis.readthedocs.io/en/latest/numpy.html" class="href">NumPy and Pandas</a> tools!
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="https://proper-testing.github.io/" class="href">PropEr</a> (Erlang)
-            </li>
-            <li>
-              <a href="https://github.com/alfert/propcheck" class="href">PropCheck</a> (Elixir)
-            </li>
-            <li>
-              <a href="https://fscheck.github.io/FsCheck/" class="href">FsCheck</a> (.NET)
-            </li>
-          </ul>
-        </section>
-        <section id="concepts">
-          <h3>Basic concepts</h3>
-          <ul>
-            <li>Properties</li>
-            <li>Generators</li>
-            <li>Shrinking (not discussed)</li>
+            <li></li>
           </ul>
         </section>
 
-        <section id="coming-up">
-          <h3>Coming up with properties</h3>
-          <ul>
-            <li>
-              Modeling
-            </li>
-            <li>
-              Invariants
-            </li>
-            <li>
-              Symmetries
-            </li>
-            <li>
-              Generalize example-based tests
-              <ul>
-                <li>
-                  Replace hard-coded input values with generators
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </section>
-
-        <section id="property-modeling">
-          <h3>
-            Modeling
-          </h3>
-
-          <pre>
-            <code class="language-elixir">
-property "finds biggest element" do
-  forall x <- non_empty(list(integer())) do
-    MyModule.biggest(x) == model_biggest(x)
-  end
-end
-
-def model_biggest(x) do
-  List.last(Enum.sort(list))
-end
-            </code>
-          </pre>
-
-        </section>
-
-        <section id="property-symmetric">
-          <h3>
-            Symmetry
-          </h3>
-
-          <pre>
-            <code class="language-elixir">
-property "symmetric encoding/decoding" do
-  forall data <- list({atom(), any()}) do
-    encoded = encode(data)
-    is_binary(encoded) and data == decode(encoded)
-  end
-end
-            </code>
-          </pre>
-
-        </section>
-
-        <section id="property-invariant">
-          <h3>
-            Invariance
-          </h3>
-
-          <pre>
-            <code class="language-elixir">
-property "a sorted list keeps its size" do
-  forall l <- list(number()) do
-    length(l) == length(MyModule.sort(l))
-  end
-end
-            </code>
-          </pre>
-        </section>
-        <section id="generators">
-          <h3>Generators</h3>
-          <ul>
-            <li>
-              Generators generate test data
-            <ul>
-              <li>
-                Integers, lists, objects, one-of, symbolic calls, HTTP requests...
-              </li>
-            </ul>
-            </li>
-            <li>
-              Generators are <b>composable</b>
-              <ul>
-                <li>Lists of integers, map with strings, symbolic calls with integer arguments</li>
-              </ul>
-            </li>
-            <li>
-              Generators can be <b>resized</b>, <b>transformed</b>, and <b>restricted</b>
-                <ul>
-                  <li>Lists with more than one million values</li>
-                  <li>List of HTTP requests where POST requests always precede GET requests</li>
-                  <li>Only non-leap-day dates</li>
-                </ul>
-            </li>
-          </ul>
-        </section>
-        <section id="fancy-generators">
-          <h3>Fancy generators</h3>
-          <ul>
-            <li><a href="http://proper.softlab.ntua.gr/papers/icst2018.pdf" class="href">Targeted example generation</a>
-              <ul>
-                <li>
-                  <a href="https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation" class="href">hypothesis.target</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.TargetedPBT.html#content" class="href">PropCheck.TargetedPBT</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              Genetic algorithms
-            </li>
-            <li>
-              State-based generators
-              <ul>
-                <li>
-                  <a href="https://hexdocs.pm/propcheck/PropCheck.StateM.html#content" class="href">PropChec.StateM</a>: <q>Given a callback module implementing the :proper_statem behaviour (i.e. defining an abstract state machine of the system under test), PropEr can generate random symbolic sequences of calls to that system</q>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </section>
-        <section id="statistics">
-          <h3>Generator statistics</h3>
-          <ul>
-            <li>
-              Very important to understand what is (not) being tested
-              <ul>
-            <li>
-              <a href="https://hexdocs.pm/propcheck/PropCheck.html#collect/2">collect</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#aggregate/2" class="href">aggregate</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#measure/3" class="href">measure</a> in PropCheck
-            </li>
-              </ul>
-              <li>Example output from <a href="https://hypothesis.readthedocs.io/en/latest/details.html#hypothesis.event">hypothesis.event</a>:
-                <pre>
-            <code>
-  - Events:
-    *  63.37%, input list length in range 0-5
-    *  27.72%, input list length in range 5-10
-    *   3.96%, input list length in range 10-15
-    *   2.97%, input list length in range 15-20
-    *   0.99%, input list length in range 35-40
-            </code>
-          </pre>
-              </li>
-          </ul>
-          
-        </section>
-        <section id="demo">
-          <h3>
-            Demo
-          </h3>
-          Repository:
-          <a href="https://github.com/ksaaskil/introduction-to-property-based-testing">
-            ksaaskil/introduction-to-property-based-testing
-          </a>
-        </section>
-
-        <section id="stateful-intro" data-markdown>
+        <section id="why-tpbt" data-markdown>
           <textarea data-template>
-### Stateful properties
+### Original paper
 
-- Most of the amazing stories of property-based testing involve large and complex *stateful* systems
-- Particularly useful when what the user sees is simple but the underlying system is complex
-			</textarea
-          >
-        </section>
-
-        <section id="stateful-2" data-markdown>
-          <textarea data-template>
-### Testing stateful properties
-
-  1. Define a **model** for how your system behaves
-  1. Let PBT framework generate series of **commands** representing operations on the system
-  1. Run the commands on **both the model and the system**
-  1. Check that the **system output agrees with the model's output**
-			</textarea
-          >
-        </section>
-
-        <section id="model" data-markdown>
-          <textarea data-template>
-### Model
-
-- Simple, straightforward, abstract version of what the actual system should be doing
-- Made of two parts:
-  1. A data structure representing the **state** of the system
-    - Dictionary, list, etc.
-  1. Function that transforms the model state based on commands applied to the system (*next_state*)
-
-<pre>
-  <code class="language-python">
-    def next_state(state: State, res: Result, operation: Operation) -> State:
-      # Update model state
-      new_state = ...
-      return new_state
-  </code>
-</pre>
-          </textarea>
-        </section>
-
-        <section id="stateful-example" data-markdown>
-          <textarea data-template>
-### Commands
-
-1. A list of potential symbolic calls with generators for arguments
-1. A series of **preconditions** defining whether a given call would make sense according to the current *model* state
-
-<pre>
-  <code class="language-elixir">
-# Possible commands based on current state
-def command(_state) do
-  oneof([
-    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
-    {:call, Bookstore.DB, :add_copy, [isbn()]},
-    {:call, Bookstore.DB, :query_existing_book, [isbn()]}
-  ])
-end
-
-# Whether a command is valid under the current state
-def precondition(state, {:call, _mod, _fun, _args}) do
-  # Some logic how to only allow "query_existing_book" if the book is in model state...
-  true
-end
-  </code>
-</pre>
-
-          </textarea>
-        </section>
-
-        <section id="postconditions" data-markdown>
-          <textarea data-template>
-### Postconditions
-
-- Used for checking that things are right when **validating actual system**
-- Not included in the model
-- Either check for
-  - invariants that should always hold true
-  - agreement between expected output based on model and the actual system output
-
-<pre>
-  <code class="language-elixir">
-# Given the state before the call, did the result from the *actual system* make sense
-def postcondition(state, {:call, _mod, _fun, _args}, _res) do
-  true
-end
-  </code>
-</pre>
-
-          </textarea>
-        </section>
-
-        <section id="stateful-summary" data-markdown>
-          <textarea data-template>
-#### Summary of stateful PBT
-Requirements:
-
-- **Model** comprised of some data (state) that gets modified by *next_state* function
-- **Commands** representing operations that can be applied, constrained with *preconditions*
-- **Postconditions** ensuring that the results from the actual system match what we expect *based on the model*
-          </textarea>
-        </section>
-
-        <section id="stateful-example" data-markdown>
-          <textarea data-template>
-#### Putting it all together
-<pre>
-  <code class="language-elixir">
-# Initial model value
-def initial_state(), do: %{}
-
-# Possible commands based on current state
-def command(_state) do
-  oneof([
-    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
-    {:call, Bookstore.DB, :add_copy, [isbn()]}
-  ])
-end
-
-# Whether a command is valid under the current state
-def precondition(state, {:call, _mod, _fun, _args}) do
-  true
-end
-
-# Given the state before the call, did the result from the *actual system* make sense
-def postcondition(state, {:call, _mod, _fun, _args}, _res) do
-  true
-end
-
-# Update the model state for the test to proceed
-def next_state(state, _res, {:call, _mod, _fun, _args}) do
-  new_state = state
-  new_state
-end
-
-  </code>
-</pre>
-          </textarea>
-        </section>
-
-        <section id="execution">
-<h3>Stateful test execution</h3>
-<ul>
-  <li>
-    PropEr divides execution of stateful tests into <b>abstract and real phases</b>
-  </li>
-  <li>
-    Abstract phase
-    <ul>
-      <li>
-        <b>is only based on the model</b>: it lacks postconditions or actual calls to the system
-      </li>
-      <li>
-        defines the sequences of commands run in the real execution phase
-      </li>
-    </ul>
-  </li>
+[Targeted property-based testing](http://proper.softlab.ntua.gr/papers/issta2017.pdf), A. Löscher and K. Sagonas, 2017.
   
-  <li>
-    Illustration from [1]:
-  </li>
-</ul>
-<img src="https://ksaaskil.github.io/introduction-to-property-based-testing/images/stateful-abstract.png"  height="200" width="500">
+> "We introduce targeted property-based testing, an enhanced form of property-based testing that aims to make the **input generation** component of a property-based testing tool **guided by a search strategy** rather than being completely random"
+
           </textarea>
-          
         </section>
 
-        <section id="execution-real">
-          <h3>Real execution phase</h3>
-<ul>
-  <li>
-    Apply the commands from the abstract execution phase to the real system
-  </li>
-  <li>
-    Also check postconditions as well as preconditions
-  </li>
-  <li>
-    <b>Important: model defines tried sequences of operations, the actual system never drives the test</b>
-  </li>
-</ul>
-<img src="https://ksaaskil.github.io/introduction-to-property-based-testing/images/execution-real.png"  height="200" width="500">
-        </section>
-
-        <section id="pattern-matching" data-markdown>
+        <section id="why-tpbt-2" data-markdown>
           <textarea data-template>
-#### Pattern matching FTW
-Pattern matching makes preconditions, postconditions, and state transitions more succint and readable
-<pre>
-  <code class="language-elixir">
-def precondition(state, {:call, _, :borrow_copy_avail, [isbn]}) do
-  0 < elem(Map.get(s, isbn), 4)
-end
+### Introduce simulated annealing
 
-def precondition(state, {:call, _, :borrow_copy_unavail, [isbn]}) do
-  0 == elem(Map.get(s, isbn), 4)
-end
+[Automating targeted property-based testing](https://proper-testing.github.io/papers/icst2018.pdf), A. Löscher and K. Sagonas, 2018.
 
-def precondition(state, {:call, _, :return_copy_full, [isbn]}) do
-  {_, _, _, owned, avail} = Map.get(s, isbn)
-  owned == avail
-end
+> "To use [targeted PBT], however, the user currently needs to specify a search strategy and also supply all ingredients that the search strategy requires. - [In this paper], we focus on **simulated annealing**, the default search strategy of our tool, and present a technique that **automatically creates all the ingredients** that targeted PBT requires **starting from only a random generator.**"
 
-def precondition(state, {:call, _, :return_copy_existing, [isbn]}) do
-  {_, _, _, owned, avail} = Map.get(s, isbn)
-  owned != avail
-end
-
-# ...and so on
-  </code>
-</pre>
           </textarea>
         </section>
 
-        <section id="demo-stateful">
-          <h3>
-            Demo
-          </h3>
-          <a href="https://github.com/ksaaskil/introduction-to-property-based-testing/tree/master/bookstore">
-            ksaaskil/introduction-to-property-based-testing:bookstore/
-          </a>
+        <section id="why-tpbt-3" data-markdown>
+          <textarea data-template>
+### PhD thesis
+
+[Targeted property-based testing with Applications in Sensor Networks](http://uu.diva-portal.org/smash/record.jsf?pid=diva2%3A1195475&dswid=7548), A. Löscher's PhD thesis, 2018.
+
+  > "This dissertation presents targeted property-based testing, an enhanced form of PBT where the input generation is guided by a search strategy instead of being random, thereby combining the strengths of QuickCheck-like and search-based testing techniques. It furthermore presents an automation for the simulated annealing search strategy that reduces the manual task of using targeted PBT."
+          </textarea>
         </section>
 
-        <section id="resources">
-          <h3>
-            Resources
-          </h3>
-          <ul>
-            <li><a href="https://fsharpforfunandprofit.com/posts/property-based-testing-2/" class="href">Choosing properties for property-based testing</a></li>
-          </ul>
+        <section id="what-is" data-markdown>
+          <textarea data-template>
+### What is targeted PBT?
+
+- PBT relies on **generators**, functions producing data from given search space
+  - Typically sample **a small part of the full search space**
+  - Unguided: **no feedback to generator** if our samples are good or bad
+- Targeted PBT: **Give feedback to the generator**
+  - **Couples test execution to data generation**
+  - "This is more like it, well done!"
+  - "This is not a good sample, please try again."
+          </textarea>
         </section>
 
-        <section id="acknowledgements">
-          <h3>Acknowledgements</h3>
-          <ul>
-            <li>
-              Slides created with
-              <a href="https://revealjs.com/#/">Reveal.js</a>
-            </li>
-            <li>
-              Color theme cloned from
-              <a href="http://www.eclipsecolorthemes.org/?view=theme&id=467"
-                >Matrix</a
-              >
-            </li>
-          </ul>
+        <section id="what-you-lose" data-markdown>
+          <textarea data-template>
+### What you lose in targeted PBT
+
+- Complex data generators (recursive)
+- Stateful tests
+- Generator metrics
+- Shrinking (at least partially)
+- Variations in data
+          </textarea>
         </section>
+
+         <section id="what-you-gain" data-markdown>
+          <textarea data-template>
+### What you gain
+
+- Generates data made for the problem at hand
+- Can generate data not found with traditional generators
+- Can replace complex generators
+  - Simplifies generating, for example, unbalanced trees
+          </textarea>
+        </section>
+
+        <section id="whos-a-good-boy" data-markdown>
+          <textarea data-template>
+### "Who's a good boy" a.k.a. how to give treats to generators
+
+- Formulated as an optimization problem
+  - Task is to maximize a given function
+  - Generator produces data leading to larger values -> reward
+  - Generator produces data leading to smaller values -> no reward
+- Be careful of local optima
+  - Short-term vs. long-term rewards
+    -> Non-greedy algorithms
+          </textarea>
+        </section>
+
+
+        <section id="generic-problem" data-markdown>
+          <textarea data-template>
+### Generic problem setup
+
+- **Search space** `S`
+- **Target function** `E: S -> R`
+  - Mapping from search space to real numbers
+  - Also known as **energy** or **utility** function
+- **Task**: Minimize `E`
+  - Equivalent to maximizing `-E`
+          </textarea>
+        </section>
+
+        <section id="search-space" data-markdown>
+          <textarea data-template>
+### Search space examples
+
+- All lists of integers with length below 1000
+- All valid `User` objects with given ID
+- All HTTP requests accepted by a server
+
+Examples from [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation):
+
+- Number of elements in a collection, or tasks in a queue
+- Mean or maximum runtime of a task (or both, if you use `label`)
+- Compression ratio for data (perhaps per-algorithm or per-level)
+- Number of steps taken by a state machine
+          </textarea>
+        </section>
+
+        <section id="target-function" data-markdown>
+          <textarea data-template>
+### Examples of target function
+
+- Execution time
+  - `S` = All lists of integers with length below 1000
+  - `E` = (Negative) time to sort the list
+
+- Response time
+  - `S` = All HTTP requests accepted by the server
+  - `E` = (Negative) server response time
+          </textarea>
+        </section>
+
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Motivating example: maximize sort time
+
+This property searches for input data that maximizes the execution time and it indeed fails, finding examples of lists that take more than a second to sort.
+
+```elixir
+property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
+    lists = list(integer())
+    short_lists = such_that(l <- lists, when: length(l) < 100_000)
+
+    forall_targeted l <- short_lists do
+      t0 = :erlang.monotonic_time(:millisecond)
+      quick_sort(l)
+      t1 = :erlang.monotonic_time(:millisecond)
+      spent = t1 - t0
+      maximize(spent)
+      spent < 1000
+    end
+  end
+```
+          </textarea>
+        </section>
+
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### How does it work?
+
+- Simulated annealing as optimization algorithm
+  - Non-greedy: probabilistic algorithm that may trade short-term rewards for long-term benefits
+  - Originates from physics
+          </textarea>
+        </section>
+
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
+
+- Method for finding the global minimum of a function `E(s)` with respect to `s`
+- Algorithm:
+
+  0. Choose initial temperature `T=T_0`, initial state `s=s_0` and compute `e=E(s)`
+  1. Generate a candidate ("neighbor") `s'` and compute `e'=E(s')`
+  2. With acceptance probability `P(e, e', T)`, move to new state by assigning `s=s'`, `e=e'`
+  3. If done, exit. Otherwise, update `T` according to annealing schedule and move to 1.
+
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Acceptance probability `P(e, e', T)`
+
+- Depends on "temperature" `T`
+- In the beginning of the search, `T` is large
+- As search progresses, `T -> 0` according to _annealing schedule_
+- `T` large: Transitions to higher-energy states (`e' > e`) are likely
+- `T` small: Transitions to higher-energy states are unlikely
+- `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
+- Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
+
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Recap of simulated annealing
+
+- Probabilistic, iterative algorithm to minimize given target function
+- Requires
+  - Candidate generator function `neighbor()`
+  - Acceptance probability function `P(e, e', T)`
+  - Annealing schedule
+  - Initial guess `s_0` and initial temperature `T_0`
+
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Candidate generation
+
+- Efficient candidate generation requires that you don't "hop around" to random states like crazy: rather try moves to states with similar energy
+  - Similar to [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
+  - Be careful of local minima
+  - Also occasional restarts may help if trapped in a bad environment
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Candidate generation in targeted PBT
+
+- Customizable via custom neighbor function (`user_nf` in `propcheck`)
+- Instead of letting framework decide which neighbors to try, you can define your own neighbor function
+- Neighbor function takes the previous data point and a tuple of current depth and temperature and returns the next value to try
+
+```elixir
+# Always add steps right and down at the end of drawn path
+def path_next() do
+  fn prev_path, , {_depth, _temperature} ->
+    let(
+      next_steps <- list(oneof([:right, :down])),
+      do: prev_path ++ next_steps
+    )
+  end
+end
+```
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Quiz 1
+
+What are the values of `l` in the following case?
+
+```elixir
+def list_next() do
+  fn _prev_list, , {_depth, _temperature} ->
+    [1, 2, 3]
+  end
+end
+
+property "targeted list generation" do
+  forall_targeted l <- user_nf(list(integer()), list_next()) do
+    ...
+  end
+end
+```
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+Answer: `l` is always `[1, 2, 3]`.
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### Quiz 2
+
+What's the generated data like in the following case?
+
+```elixir
+def list_next() do
+  fn prev_list, , {_depth, _temperature} ->
+    prev_list
+  end
+end
+
+property "targeted list generation" do
+  forall_targeted l <- user_nf(list(integer()), list_next()) do
+    ...
+  end
+end
+```
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+Answer: `l` is random but fixed, equal to the first randomly drawn list.
+          </textarea>
+        </section>
+        <section id="maximize-sort" data-markdown>
+          <textarea data-template>
+### More variations
+
+- With custom neighbor functions, all generated data is a variation of the first drawn value
+- You can get more variation by wrapping targeted search in a `forall` block
+- Test below executes the `forall` block five times and searches for 10 steps for each block
+
+```elixir
+property "targeted path generation with variation", search_steps: 10, numtests: 5 do
+  forall p <- path() do
+    # Trick to make a generator from value
+    p_gen = let(p_ <- p, do: p_)
+
+    forall_targeted p2 <- user_nf(p_gen, path_next()) do
+      {x, y} = List.foldl(p2, {0, 0}, fn v, acc -> move(v, acc) end)
+      neg_loss = x - y
+      IO.puts("Last point: {#{x}, #{y}}, negative loss: #{neg_loss}")
+      maximize(neg_loss)
+      true
+    end
+  end
+end
+```
+          </textarea>
+        </section>
+
       </div>
     </div>
 
