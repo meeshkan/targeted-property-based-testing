@@ -1,6 +1,6 @@
-# Introduction to property-based testing
+# Introduction to targeted property-based testing
 
-See the slides at [https://ksaaskil.github.io/introduction-to-property-based-testing/](https://ksaaskil.github.io/introduction-to-property-based-testing/).
+See the slides at [https://meeshkan.github.io/targeted-property-based-testing/](https://meeshkan.github.io/targeted-property-based-testing/).
 
 ## [`elixir-propcheck`](./elixir-propcheck)
 
@@ -14,16 +14,11 @@ $ mix new elixir-propcheck --app pbt
 
 `mix` comes with [Elixir](https://elixir-lang.org/install.html).
 
-## [`bookstore`](./bookstore)
-
-Example of stateful property-based testing from [PropEr testing book](https://propertesting.com/).
-
 ## [`python-hypothesis`](./python-hypothesis)
 
-Examples of property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
+Examples of targeted property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
 
-- [`python-hypothesis/test_hypothesis.py`](./python-hypothesis/test_hypothesis.py): Examples from Hypothesis documentation
-- [`python-hypothesis/test_gitlab_stateful.py`](./python-hypothesis/test_gitlab_stateful.py): Stateful property-based testing for GitLab-like API
+- [`python-hypothesis/test_targeted_pbt.py`](./python-hypothesis/test_targeted_pbt.py): Examples for learning targeted PBT in Hypothesis
 
 ## [`erlang-targeted-pbt`](./erlang-targeted-pbt)
 
