@@ -2,6 +2,10 @@
 
 Many of the examples here come from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
 
+## Contents
+
+- [`test/prop_target.erl`](./test/prop_target.erl`): Examples from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
+
 ## Instructions
 
 Build

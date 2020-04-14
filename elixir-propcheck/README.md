@@ -1,6 +1,6 @@
-# Property-based testing with [`PropCheck`](https://hexdocs.pm/propcheck/PropCheck.html)
+# Targeted property-based testing with [`PropCheck`](https://hexdocs.pm/propcheck/PropCheck.html)
 
-Examples of property-based tests in Elixir. Many of the examples come from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
+Examples of targeted property-based tests in Elixir with many of the examples translated from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
 
 ## What's in the repo
 
