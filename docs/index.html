@@ -36,14 +36,7 @@
           </p>
         </section>
         
-        <section id="why">
-          <h3>Why targeted property-based tests?</h3>
-          <ul>
-            <li></li>
-          </ul>
-        </section>
-
-        <section id="why-tpbt" data-markdown>
+        <section id="original-paper" data-markdown>
           <textarea data-template>
 ### Original paper
 
@@ -54,9 +47,9 @@
           </textarea>
         </section>
 
-        <section id="why-tpbt-2" data-markdown>
+        <section id="follow-up-paper" data-markdown>
           <textarea data-template>
-### Introduce simulated annealing
+### Follow-up paper
 
 [Automating targeted property-based testing](https://proper-testing.github.io/papers/icst2018.pdf), A. Löscher and K. Sagonas, 2018.
 
@@ -65,7 +58,7 @@
           </textarea>
         </section>
 
-        <section id="why-tpbt-3" data-markdown>
+        <section id="phd-thesis" data-markdown>
           <textarea data-template>
 ### PhD thesis
 
@@ -75,7 +68,7 @@
           </textarea>
         </section>
 
-        <section id="what-is" data-markdown>
+        <section id="what-is-tpbt" data-markdown>
           <textarea data-template>
 ### What is targeted PBT?
 
@@ -125,7 +118,6 @@
     -> Non-greedy algorithms
           </textarea>
         </section>
-
 
         <section id="generic-problem" data-markdown>
           <textarea data-template>
@@ -195,7 +187,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
           </textarea>
         </section>
 
-        <section id="maximize-sort" data-markdown>
+        <section id="how-does-it-work" data-markdown>
           <textarea data-template>
 ### How does it work?
 
@@ -205,7 +197,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
           </textarea>
         </section>
 
-        <section id="maximize-sort" data-markdown>
+        <section id="simulated-annealing" data-markdown>
           <textarea data-template>
 ### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
 
@@ -219,7 +211,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
 
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="acceptance-probability" data-markdown>
           <textarea data-template>
 ### Acceptance probability `P(e, e', T)`
 
@@ -233,7 +225,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
 
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="simulated-annealing" data-markdown>
           <textarea data-template>
 ### Recap of simulated annealing
 
@@ -246,7 +238,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
 
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="candidate-generation" data-markdown>
           <textarea data-template>
 ### Candidate generation
 
@@ -256,7 +248,7 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
   - Also occasional restarts may help if trapped in a bad environment
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="candidate-generation-tpbt" data-markdown>
           <textarea data-template>
 ### Candidate generation in targeted PBT
 
@@ -277,7 +269,7 @@ end
 ```
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="quiz-1" data-markdown>
           <textarea data-template>
 ### Quiz 1
 
@@ -298,12 +290,12 @@ end
 ```
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="quiz-1-answer" data-markdown>
           <textarea data-template>
 Answer: `l` is always `[1, 2, 3]`.
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="quiz-2" data-markdown>
           <textarea data-template>
 ### Quiz 2
 
@@ -324,12 +316,12 @@ end
 ```
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="quiz-2-answer" data-markdown>
           <textarea data-template>
 Answer: `l` is random but fixed, equal to the first randomly drawn list.
           </textarea>
         </section>
-        <section id="maximize-sort" data-markdown>
+        <section id="more-variations" data-markdown>
           <textarea data-template>
 ### More variations
 
