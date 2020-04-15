@@ -16,9 +16,7 @@ $ mix new elixir-propcheck --app pbt
 
 ## [`python-hypothesis`](./python-hypothesis)
 
-Examples of targeted property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
-
-- [`python-hypothesis/test_targeted_pbt.py`](./python-hypothesis/test_targeted_pbt.py): Examples for learning targeted PBT in Hypothesis
+Examples of targeted property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library.
 
 ## [`erlang-targeted-pbt`](./erlang-targeted-pbt)
 
