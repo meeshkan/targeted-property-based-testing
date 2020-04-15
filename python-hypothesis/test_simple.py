@@ -1,3 +1,5 @@
+"""Contrived example of targeting given floats.
+"""
 from hypothesis import given, target, settings, Phase, Verbosity, seed, example
 import hypothesis.strategies as some
 import math
@@ -51,7 +53,7 @@ regex = re.compile("(a+)+")
     ],  # Skip Phase.reuse to not run previous counter-examples
 )
 def test_redos(chars):
-
+    """Attempt to reproduce ReDoS with Python regexes, no success."""
     start = time.time()
     regex.match(chars)
     spent = time.time() - start

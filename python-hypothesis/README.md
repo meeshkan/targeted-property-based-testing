@@ -1,9 +1,9 @@
-# Examples of PBT with [`hypothesis`](https://hypothesis.readthedocs.io/)
+# Examples of targeted PBT with [`hypothesis`](https://hypothesis.readthedocs.io/)
 
-Examples of property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
+Examples of targeted property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
 
-- [`test_hypothesis.py`](./test_hypothesis.py): Examples from Hypothesis documentation
-- [`test_gitlab_stateful.py`](./test_gitlab_stateful.py): Stateful property-based testing for GitLab-like API
+- [`test_pathgen.py`](./test_pathgen.py): Standard example of targeted data generation.
+- [`test_quicksort.py`](./test_quicksort.py): Attempt to reproduce worst-case behaviour of naive quick-sort by maximizing run-time.
 
 ## Instructions
 
@@ -12,11 +12,10 @@ $ pip install -r requirements.txt
 $ pytest
 ```
 
-Use Hypothesis [plugin](https://hypothesis.readthedocs.io/en/latest/details.html#the-hypothesis-pytest-plugin) to, for example, display statistics:
+More commonly, you want to run specific tests with full logging like this:
 
 ```bash
-# Show statistics
-$ pytest --hypothesis-show-statistics
-# Reproduce a failure with fixed seed
-$ pytest --hypothesis-seed=0
+$ pytest -s test_pathgen.py -k paths_with_target --hypothesis-show-statistics
 ```
+
+The `--hypothesis-show-statistics` flag comes with the Hypothesis Pytest [plugin](https://hypothesis.readthedocs.io/en/latest/details.html#the-hypothesis-pytest-plugin).
