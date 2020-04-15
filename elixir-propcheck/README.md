@@ -6,7 +6,7 @@ Examples of targeted property-based tests in Elixir with many of the examples tr
 
 ### Targeted PBT examples
 
-- [`test/pathgen_test.exs`](./test/pathgen_test.exs): Example of targeted path generation
+- [`test/tpbt_pathgen_test.exs`](./test/tpbt_pathgen_test.exs): Example of targeted path generation
 - [`test/tpbt_quicksort_test.exs`](./test/tpbt_quicksort_test.exs): Find pathological lists for naive quicksort implementation
 - [`test/tpbt_usernf_test.exs`](./test/tpbt_usernf_test.exs): Example of custom neighbor functions in targeted PBT
 - [`test/tpbt_variations_test.exs`](./test/tpbt_variations_test.exs): Wrapping targeted PBT in a `forall` for more varying data
