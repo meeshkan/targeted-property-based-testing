@@ -27,7 +27,7 @@ defmodule TargetedPbtUsernfTest do
     end
   end
 
-  property "targeted path generation", search_steps: 10 do
+  property "targeted path generation", search_steps: 1000 do
     forall_targeted p <- user_nf(path(), path_next()) do
       IO.puts("Path has #{length(p)} steps: #{Enum.join(p, ",")}")
       {x, y} = List.foldl(p, {0, 0}, fn v, acc -> move(v, acc) end)
@@ -62,11 +62,11 @@ defmodule TargetedPbtUsernfTest do
 
   # User-defined neighbor function that always
   # returns the same data
-  def path_next_fixed() do
-    fn prev_path, {_depth, _temperature} ->
-      prev_path
-    end
-  end
+  # def path_next_fixed() do
+  #  fn prev_path, {_depth, _temperature} ->
+  #    prev_path
+  #  end
+  # end
 
   # Helpers
   def move(:left, {x, y}), do: {x - 1, y}
