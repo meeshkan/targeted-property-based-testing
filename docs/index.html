@@ -31,7 +31,13 @@
             Sources:
             <ul>
               <li>
-                <a href="https://propertesting.com/">[1] Property-Based testing with PropEr, Erlang, and Elixir</a>
+                <a href="https://propertesting.com/">Property-Based testing with PropEr, Erlang, and Elixir</a>
+              </li>
+              <li>
+                <a href="http://proper.softlab.ntua.gr/papers/issta2017.pdf">Targeted property-based testing</a>
+              </li>
+              <li>
+                <a href="https://proper-testing.github.io/papers/icst2018.pdf">Automating targeted property-based testing</a>
               </li>
           </p>
         </section>
@@ -82,15 +88,22 @@ Also:
           </textarea>
         </section>
 
+        <section id="what-is-pbt" data-markdown>
+          <textarea data-template>
+### Traditional property-based testing
+
+- Relies on **generators**, functions producing data from given search space
+- Typically sample **a small part of the full search space**
+- Unguided: **no feedback to generator** if our samples are good or bad
+          </textarea>
+        </section>
+
         <section id="what-is-tpbt" data-markdown>
           <textarea data-template>
 ### What is targeted PBT?
 
-- PBT relies on **generators**, functions producing data from given search space
-  - Typically sample **a small part of the full search space**
-  - Unguided: **no feedback to generator** if our samples are good or bad
-- Targeted PBT: **Give feedback to the generator**
-  - **Couples test execution to data generation**
+- **Give feedback to the generator**
+- **Couples test execution to data generation**
   - "This is more like it, well done!"
   - "This is not a good sample, please try again."
           </textarea>
@@ -101,7 +114,7 @@ Also:
 ### What you lose in targeted PBT
 
 - Complex data generators (recursive)
-- Stateful tests
+- Stateful testing (in regular form)
 - Generator metrics
 - Shrinking (at least partially)
 - Variations in data
@@ -112,16 +125,16 @@ Also:
           <textarea data-template>
 ### What you gain
 
-- Generates data made for the problem at hand
-- Can generate data not found with traditional generators
+- Generators producing data for the problem at hand
 - Can replace complex generators
-  - Simplifies generating, for example, unbalanced trees
+  - Example: How to generate unbalanced trees?
+    - Maximize unbalancedness
           </textarea>
         </section>
 
         <section id="whos-a-good-boy" data-markdown>
           <textarea data-template>
-### "Who's a good boy" a.k.a. how to give treats to generators
+### "Who's a good boy" or how to give treats to generators
 
 - Formulated as an optimization problem
   - Task is to maximize a given function
@@ -153,6 +166,12 @@ Also:
 - All lists of integers with length below 1000
 - All valid `User` objects with given ID
 - All HTTP requests accepted by a server
+          </textarea>
+        </section>
+
+        <section id="more-search-space" data-markdown>
+          <textarea data-template>
+### More search space examples
 
 Examples from [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation):
 
@@ -205,15 +224,16 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
           <textarea data-template>
 ### How does it work?
 
-- Simulated annealing as optimization algorithm
-  - Non-greedy: probabilistic algorithm that may trade short-term rewards for long-term benefits
-  - Originates from physics
+- [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing) as optimization algorithm
+- Non-greedy algorithm: **trade short-term rewards for long-term benefits**
+- Works also for discrete search space
+- Originates from physics
           </textarea>
         </section>
 
         <section id="simulated-annealing" data-markdown>
           <textarea data-template>
-### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
+### Simulated annealing
 
 - Method for finding the global minimum of a function `E(s)` with respect to `s`
 - Algorithm:
@@ -229,14 +249,13 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
           <textarea data-template>
 ### Acceptance probability `P(e, e', T)`
 
-- Depends on "temperature" `T`
+- Depends on **"temperature" `T`**
 - In the beginning of the search, `T` is large
 - As search progresses, `T -> 0` according to _annealing schedule_
-- `T` large: Transitions to higher-energy states (`e' > e`) are likely
-- `T` small: Transitions to higher-energy states are unlikely
-- `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
+  - `T` large: Transitions to higher-energy states (`e' > e`) are likely
+  - `T` small: Transitions to higher-energy states are unlikely
+  - `T = 0`: Transitions allowed only to smaller-energy states (greedy)
 - Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
-
           </textarea>
         </section>
         <section id="simulated-annealing" data-markdown>
@@ -256,18 +275,18 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
           <textarea data-template>
 ### Candidate generation
 
-- Efficient candidate generation requires that you don't "hop around" to random states like crazy: rather try moves to states with similar energy
+- Efficient candidate generation requires that you don't just "hop around" to random states: rather try moves to states with similar energy
   - Similar to [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
-  - Be careful of local minima
-  - Also occasional restarts may help if trapped in a bad environment
+- Be careful of local minima
+- Also occasional restarts may help if trapped in a bad environment
           </textarea>
         </section>
         <section id="candidate-generation-tpbt" data-markdown>
           <textarea data-template>
 ### Candidate generation in targeted PBT
 
-- Customizable via custom neighbor function (`user_nf` in `propcheck`)
-- Instead of letting framework decide which neighbors to try, you can define your own neighbor function
+- Instead of letting generator decide which neighbor to try next, you can define your own **neighbor function**
+  - `user_nf` in `propcheck`, not available in Hypothesis
 - Neighbor function takes the previous data point and a tuple of current depth and temperature and returns the next value to try
 
 ```elixir
@@ -359,6 +378,17 @@ property "targeted path generation with variation", search_steps: 10, numtests: 
   end
 end
 ```
+          </textarea>
+        </section>
+
+        <section id="learn-more" data-markdown>
+          <textarea data-template>
+### Learn more
+
+- [PropCheck tutorial](https://hexdocs.pm/propcheck/PropCheck.TargetedPBT.html#content)
+- [PropEr tutorial](https://proper-testing.github.io/tutorials/PropEr_testing_with_search_strategies.html)
+- [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation)
+- [Papers and articles](https://github.com/proper-testing/proper-testing.github.io/blob/master/publications.md)
           </textarea>
         </section>
 
