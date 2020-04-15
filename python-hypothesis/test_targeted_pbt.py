@@ -3,8 +3,10 @@ import hypothesis.strategies as some
 import math
 import time
 import re
+import pytest
 
 
+@pytest.mark.skip
 @given(d=some.floats().filter(lambda x: abs(x) < 1000))
 @settings(
     max_examples=1000,
