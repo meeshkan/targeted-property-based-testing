@@ -1,4 +1,4 @@
-defmodule TargetedPbtTest do
+defmodule PathGenTest do
   use ExUnit.Case
   use PropCheck, default_opts: [numtests: 100, search_steps: 100]
   doctest Pbt
