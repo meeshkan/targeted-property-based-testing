@@ -52,18 +52,22 @@ def test_paths_notarget(path):
     """Generate paths without any target.
     """
     x, y = path_endpoint(path)
-    print("x={}, y={}, path=[{}]".format(x, y, ", ".join([str(p) for p in path])))
+    print(
+        "No target: x={}, y={}, path=[{}]".format(
+            x, y, ", ".join([str(p) for p in path])
+        )
+    )
     in_range = to_range(x - y, 10)
     event(str(in_range))
 
 
-@given(path=some_paths())
-@settings(max_examples=100)
+@given(path=some_paths().filter(lambda path: len(path) < 1000))
+@settings(max_examples=250)
 def test_paths_with_target(path):
     """Generate paths targeting lower right.
     """
     x, y = path_endpoint(path)
-    print("x={}, y={}, len={}".format(x, y, len(path)))
+    print("With target: x={}, y={}, len={}".format(x, y, len(path)))
 
     in_range = to_range(x - y, 100)
     event(str(in_range))
